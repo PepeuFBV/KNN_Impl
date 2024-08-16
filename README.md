@@ -2,7 +2,7 @@
 
 Implementing KNN from scratch in Python, using numpy, pandas and matplotlib for visualization.
 
-The dataset used is the (Diabetes Dataset For Beginners)[https://www.kaggle.com/code/melikedilekci/diabetes-dataset-for-beginners]  from Kaggle. This dataset is originally from the National Institute of Diabetes and Digestive and Kidney Diseases. The objective of the dataset is to diagnostically predict whether a patient has diabetes, based on certain diagnostic measurements included in the dataset. Several constraints were placed on the selection of these instances from a larger database. In particular, all patients here are females at least 21 years old of Pima Indian heritage.
+The dataset used is the [Diabetes Dataset For Beginners](https://www.kaggle.com/code/melikedilekci/diabetes-dataset-for-beginners)  from Kaggle. This dataset is originally from the National Institute of Diabetes and Digestive and Kidney Diseases. The objective of the dataset is to diagnostically predict whether a patient has diabetes, based on certain diagnostic measurements included in the dataset. Several constraints were placed on the selection of these instances from a larger database. In particular, all patients here are females at least 21 years old of Pima Indian heritage.
 
 The selected dataset contains 9 columns and 768 entries. The columns are as follows:
 1. Pregnancies: Number of times pregnant

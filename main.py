@@ -24,6 +24,8 @@ predictions = model.predict(X_test)
 accuracy = np.sum(predictions == y_test) / len(y_test) # number of correct predictions divided by total number of predictions
 
 print(f"{accuracy * 100:.2f}% is the accuracy of the model without preprocessing the data")
+from sklearn.metrics import classification_report
+print(classification_report(y, predictions))
 
 
 # Confusion matrix for dataset without preprocessing
@@ -100,6 +102,8 @@ knn.fit(X_train, y_train)
 predictions = knn.predict(X_test)
 knn_accuracy = np.sum(predictions == y_test) / len(y_test)
 print(f"{knn_accuracy * 100:.2f}% is the accuracy of the model after preprocessing the data")
+from sklearn.metrics import classification_report
+print(classification_report(y, predictions))
 
 
 #################################################
@@ -122,7 +126,7 @@ plt.ylabel('Accuracy')
 plt.show()
 
 best_k = k[scores.index(max(scores))]
-print(f"The best k value is {best_k}")
+print(f"The best k value is {best_k} for a 10-fold cross validation")
 
 
 #################################################
@@ -151,3 +155,14 @@ plt.plot(k, best_scores)
 plt.xlabel('k')
 plt.ylabel('Accuracy')
 plt.show()
+
+#################################################
+
+# Using the best k value and cv value
+
+knn = KNN(best_result[1])
+predictions = cross_val_predict(knn, x_clean, y, cv=cv_for_best_scores[k.index(best_result[1])])
+accuracy = accuracy_score(y, predictions)
+
+from sklearn.metrics import classification_report
+print(classification_report(y, predictions))

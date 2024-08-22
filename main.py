@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from sklearn.metrics import classification_report
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import accuracy_score
 import seaborn as sns
 from KNN import KNN
 cmap = ListedColormap(['#FF0000', '#00FF00', '#0000FF'])
@@ -115,9 +117,7 @@ print(classification_report(y_test, predictions))
 
 
 # Using cross_validation to get the best k value
-from sklearn.model_selection import cross_val_predict
-from sklearn.metrics import accuracy_score
-k = list(range(1, 100))
+k = list(range(1, 100, 2)) # [1, 3, 5, 7, 9, ..., 99]
 scores = []
 print("\nCalculating for [1, 100] k values...")
 for i in k:
@@ -132,14 +132,14 @@ plt.ylabel('Accuracy')
 plt.show()
 
 best_k = k[scores.index(max(scores))]
-print(f"The best k value is {best_k} for a 10-fold cross validation with a accuracy of {max(scores)*100}%")
+print(f"The best k value is {best_k} for a 10-fold cross validation with a accuracy of {max(scores)*100:.2f}%")
 
 
 #################################################
 
 
-k = list(range(9, 55))
-cv = list(range(3, 15))
+k = list(range(9, 56, 2))
+cv = list(range(3, 16))
 best_scores = []
 cv_for_best_scores = []
 best_result = [0, 0]
@@ -155,7 +155,7 @@ for i in k:
     if max(scores) > best_result[0]:
         best_result = [max(scores), i]
 print(f"\nThe best k value is {best_result[1]} with a cv value of {cv_for_best_scores[k.index(best_result[1])]}, "
-      f"with an accuracy of {best_result[0]*100}%")
+      f"with an accuracy of {best_result[0]*100:.2f}%")
 
 plt.plot(k, best_scores)
 plt.suptitle("Accuracy for different k values with best cv value")
@@ -169,10 +169,10 @@ plt.show()
 
 # Using PCA to reduce the number of features and test results
 from sklearn.decomposition import PCA
-pca_range = list(range(1, 4))
+pca_range = list(range(2, 5))
 k_value = 12
 scores = []
-print("\nCalculating for [1, 3] PCA components...")
+print("\nCalculating for [2, 4] PCA components...")
 for i in pca_range:
     pca = PCA(n_components=i)
     x_pca = pca.fit_transform(x_clean)
@@ -186,16 +186,64 @@ plt.xlabel('PCA components')
 plt.ylabel('Accuracy')
 plt.show()
 
-# Since the accuracy with the PCA components is lower than the accuracy without PCA, we will not use PCA for the
-# final test, only the best k and cv values found
+
+#################################################
+
+
+# Running the model with different k values [10, 55], changing the cv value [3, 15] and using changing PCA components
+# [1, 4]
+best_scores = []
+best_results = []
+best_cv = []
+best_pca = []
+k = list(range(9, 56, 2))
+cv = list(range(3, 16))
+pca_range = list(range(1, 5))
+print("\nCalculating best k, cv and PCA components...")
+for i in k:
+    for j in cv:
+        for l in pca_range:
+            pca = PCA(n_components=l)
+            x_pca = pca.fit_transform(x_clean)
+            knn = KNN(i)
+            predictions = cross_val_predict(knn, x_pca, y, cv=j)
+            score = accuracy_score(y, predictions)
+            best_scores.append(score)
+            best_results.append(i)
+            best_cv.append(j)
+            best_pca.append(l)
+
+best_result = best_results[best_scores.index(max(best_scores))]
+best_cv = best_cv[best_scores.index(max(best_scores))]
+best_pca = best_pca[best_scores.index(max(best_scores))]
+print(f"\nThe best k value is {best_result} with a cv value of {best_cv} and {best_pca} PCA components, "
+      f"with an accuracy of {max(best_scores)*100:.2f}%")
+
+# Plotting the accuracy for different PCA components, for their best k and cv values
+scores = []
+for i in pca_range:
+    pca = PCA(n_components=i)
+    x_pca = pca.fit_transform(x_clean)
+    knn = KNN(best_result)
+    predictions = cross_val_predict(knn, x_pca, y, cv=best_cv)
+    scores.append(accuracy_score(y, predictions))
+
+plt.plot(pca_range, scores)
+plt.suptitle("Accuracy for different PCA components, with best k and cv values")
+plt.xlabel('PCA components')
+plt.ylabel('Accuracy')
+plt.show()
 
 
 #################################################
 
-# Using the best k value and cv value for last test without PCA
 
-knn = KNN(best_result[1])
-predictions = cross_val_predict(knn, x_clean, y, cv=cv_for_best_scores[k.index(best_result[1])])
+# Using the best k value and cv value for last test with best PCA
+pca = PCA(n_components=best_pca)
+x_pca = pca.fit_transform(x_clean)
+
+knn = KNN(best_result)
+predictions = cross_val_predict(knn, x_pca, y, cv=best_cv)
 accuracy = accuracy_score(y, predictions)
 print(f"{accuracy * 100:.2f}% is the accuracy of the model after preprocessing the data, with the usage of the best "
       f"k, best cv and no PCA usage")

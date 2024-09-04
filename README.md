@@ -6,6 +6,18 @@ Implementing KNN from scratch in Python, then using it to predict diabetes in pa
 
 To run the code, you will need to have Python installed on your system. You can download Python from the official website [here](https://www.python.org/downloads/). The code is written in Python 3.11.0, so it is recommended to use this version of Python to run the code.
 
+To clone the repository, you can use the following command:
+
+```bash
+git clone https://github.com/PepeuFBV/KNN_Impl
+```
+
+Then, navigate to the project directory using the following command:
+
+```bash
+cd KNN_Impl
+```
+
 To install the required libraries, you can use the following command:
 
 ```bash
